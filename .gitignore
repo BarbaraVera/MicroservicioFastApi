@@ -1,0 +1,5 @@
+# Ignorar el directorio del entorno virtual
+mi_entorno_virtual/
+
+# Ignorar archivos .pyc (archivos de bytecode de Python)
+*.pyc
