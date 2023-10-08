@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import FastAPI, HTTPException
 from basededatos import SessionLocal, Tarea
-from esquema import Tarea_esquema, Tarea_actualizada, Tarea_actualizada_patch
+from esquema import Tarea_esquema, Tarea_actualizada, Tarea_actualizada_patch, Lista_tareas
 
 app = FastAPI()
 
@@ -11,7 +11,6 @@ def crear_tarea(tarea: Tarea_esquema):
     conexion = SessionLocal()
 
     tarea_nueva = Tarea(
-        id = tarea.id,
         titulo=tarea.titulo,
         descripcion = tarea.descripcion,
         fecha_vencimiento = tarea.fecha_vencimiento
@@ -25,7 +24,7 @@ def crear_tarea(tarea: Tarea_esquema):
     return tarea
 
 #obtengo las tareas
-@app.get("/tareas/", response_model=List[Tarea_esquema])
+@app.get("/tareas/", response_model=List[Lista_tareas])
 def obtener_tareas():
     conexion = SessionLocal()
     tareas = conexion.query(Tarea).all()
