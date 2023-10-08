@@ -1,15 +1,9 @@
-from datetime import date
 from typing import List
 from fastapi import FastAPI
-from pydantic import BaseModel
-from basededatos import SessionLocal, Tarea, engine
+from basededatos import SessionLocal, Tarea
+from esquema import Tarea_esquema
 
 app = FastAPI()
-
-class Tarea_esquema (BaseModel):
-    titulo: str
-    descripcion:str
-    fecha_vencimiento : date
 
 #creo tareas
 @app.post("/crear/", response_model=Tarea_esquema)
