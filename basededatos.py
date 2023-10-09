@@ -18,5 +18,6 @@ class Tarea(Base):
     titulo = Column(String)
     descripcion = Column(String)
     fecha_vencimiento = Column(Date)
+    estado = Column(String)
 
 Base.metadata.create_all(bind=engine)

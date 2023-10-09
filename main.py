@@ -1,7 +1,7 @@
 from typing import List
-from fastapi import FastAPI, HTTPException
+from fastapi import Body, FastAPI, HTTPException
 from basededatos import SessionLocal, Tarea
-from esquema import Tarea_esquema, Tarea_actualizada, Tarea_actualizada_patch, Lista_tareas
+from esquema import Tarea_esquema, Tarea_actualizada, Tarea_actualizada_patch, Lista_tareas, Estado_tarea, Filtro_tarea
 
 app = FastAPI()
 
@@ -13,7 +13,8 @@ def crear_tarea(tarea: Tarea_esquema):
     tarea_nueva = Tarea(
         titulo=tarea.titulo,
         descripcion = tarea.descripcion,
-        fecha_vencimiento = tarea.fecha_vencimiento
+        fecha_vencimiento = tarea.fecha_vencimiento,
+        estado = "Pendiente"
     )
 
     conexion.add(tarea_nueva)
@@ -87,3 +88,39 @@ def actualizar_tarea_patch(tarea_id: int, tarea_actualizada: Tarea_actualizada_p
     conexion.close()
 
     return  {'message': 'tarea actualizada'}
+
+#Actualizar estado
+@app.put("/tareas/{tarea_id}/estado/")
+def cambiar_estado(tarea_id:int, estado: Estado_tarea):
+    conexion= SessionLocal()
+    tarea = conexion.query(Tarea).filter(Tarea.id == tarea_id).first()
+
+    if tarea is None:
+        conexion.close()
+        raise HTTPException(status_code=404, detail="No encontrado")
+    
+    if estado.estado not in ["Completada"]:
+        conexion.close()
+        raise HTTPException(status_code=404, detail="No existe ese estado")
+    
+    tarea.estado = estado.estado
+
+    conexion.commit()
+    conexion.close()
+
+    return {"message": "Estado actualizado"}
+    
+#Buscar por estado
+@app.get("/tareas/estado/")
+def obtener_tareas_filtradas(filtros: Filtro_tarea = Body(None)):
+    db = SessionLocal()
+    buscar = db.query(Tarea)
+    
+    if filtros.estado:
+        buscar = buscar.filter(Tarea.estado == filtros.estado)
+    
+    tareas = buscar.all()
+    
+    db.close()
+    
+    return {"tareas": tareas}

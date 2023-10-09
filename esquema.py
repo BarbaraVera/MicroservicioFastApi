@@ -12,6 +12,7 @@ class Lista_tareas (BaseModel):
     titulo: str
     descripcion:str
     fecha_vencimiento : date
+    estado : str
 
 class Tarea_actualizada(BaseModel):
     titulo: str
@@ -22,3 +23,9 @@ class Tarea_actualizada_patch(BaseModel):
     titulo: str = None
     descripcion:str = None
     fecha_vencimiento : date = None
+
+class Estado_tarea(BaseModel):
+    estado:str
+
+class Filtro_tarea(BaseModel):
+    estado : str = None
