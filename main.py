@@ -5,6 +5,10 @@ from esquema import Tarea_esquema, Tarea_actualizada, Tarea_actualizada_patch, L
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"message": "Microservicio FastAPI"}
+
 #creo tareas
 @app.post("/crear/", response_model=Tarea_esquema)
 def crear_tarea(tarea: Tarea_esquema):
@@ -33,7 +37,7 @@ def obtener_tareas():
     return tareas
 
 #eliminar tarea
-@app.delete("/tareas/{tarea_id}/")
+@app.delete("/tarea/{tarea_id}/")
 def eliminar_tarea(tarea_id: int):
     conexion = SessionLocal()
     tarea = conexion.query(Tarea).filter(Tarea.id == tarea_id).first()
@@ -49,7 +53,7 @@ def eliminar_tarea(tarea_id: int):
     return {"message": "La tarea se ha eliminado"}
 
 #actualizar tareas
-@app.put("/tareas/{tarea_id}/")
+@app.put("/tarea/{tarea_id}/")
 def actualizar_tarea(tarea_id: int, tarea_actualizada: Tarea_actualizada):
     conexion = SessionLocal()
     tarea = conexion.query(Tarea).filter(Tarea.id == tarea_id).first()
@@ -68,7 +72,7 @@ def actualizar_tarea(tarea_id: int, tarea_actualizada: Tarea_actualizada):
     return {"message": "Tarea actualizada correctamente"}
 
 #actualizar con patch
-@app.patch("/tareas/{tarea_id}/")
+@app.patch("/tarea/{tarea_id}/")
 def actualizar_tarea_patch(tarea_id: int, tarea_actualizada: Tarea_actualizada_patch):
     conexion = SessionLocal()
     tarea = conexion.query(Tarea).filter(Tarea.id == tarea_id).first()
@@ -90,7 +94,7 @@ def actualizar_tarea_patch(tarea_id: int, tarea_actualizada: Tarea_actualizada_p
     return  {'message': 'tarea actualizada'}
 
 #Actualizar estado
-@app.put("/tareas/{tarea_id}/estado/")
+@app.put("/tarea/{tarea_id}/estado/")
 def cambiar_estado(tarea_id:int, estado: Estado_tarea):
     conexion= SessionLocal()
     tarea = conexion.query(Tarea).filter(Tarea.id == tarea_id).first()
@@ -111,7 +115,7 @@ def cambiar_estado(tarea_id:int, estado: Estado_tarea):
     return {"message": "Estado actualizado"}
     
 #Buscar por estado
-@app.get("/tareas/estado/")
+@app.get("/tarea/estado/")
 def obtener_tareas_filtradas(filtros: Filtro_tarea = Body(None)):
     db = SessionLocal()
     buscar = db.query(Tarea)
