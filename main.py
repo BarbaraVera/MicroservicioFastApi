@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import Body, FastAPI, HTTPException
+from fastapi import Body, FastAPI, HTTPException, Query
 from basededatos import SessionLocal, Tarea
 from esquema import Tarea_esquema, Tarea_actualizada, Tarea_actualizada_patch, Lista_tareas, Estado_tarea, Filtro_tarea
 
@@ -13,28 +13,41 @@ async def root():
 @app.post("/crear/", response_model=Tarea_esquema)
 def crear_tarea(tarea: Tarea_esquema):
     conexion = SessionLocal()
-
-    tarea_nueva = Tarea(
-        titulo=tarea.titulo,
-        descripcion = tarea.descripcion,
-        fecha_vencimiento = tarea.fecha_vencimiento,
-        estado = "Pendiente"
-    )
-
-    conexion.add(tarea_nueva)
-    conexion.commit()
-    conexion.refresh(tarea_nueva)
-    conexion.close()
+    
+    try:
+        tarea_nueva = Tarea(
+            titulo=tarea.titulo,
+            descripcion=tarea.descripcion,
+            fecha_vencimiento=tarea.fecha_vencimiento,
+            estado="Pendiente"
+        )
+        conexion.add(tarea_nueva)
+        conexion.commit()
+        conexion.refresh(tarea_nueva)
+    except Exception as e:
+        # Manejar excepciones específicas aquí
+        conexion.rollback()
+        raise HTTPException(status_code=500, detail="Error al crear la tarea")
+    finally:
+        conexion.close()
 
     return tarea
+
 
 #obtengo las tareas
 @app.get("/tareas/", response_model=List[Lista_tareas])
 def obtener_tareas():
     conexion = SessionLocal()
-    tareas = conexion.query(Tarea).all()
-    conexion.close()
+
+    try:
+        tareas = conexion.query(Tarea).all()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error al obtener las tareas")
+    finally:
+        conexion.close()
+
     return tareas
+
 
 #eliminar tarea
 @app.delete("/tarea/{tarea_id}/")
@@ -115,16 +128,15 @@ def cambiar_estado(tarea_id:int, estado: Estado_tarea):
     return {"message": "Estado actualizado"}
     
 #Buscar por estado
-@app.get("/tarea/estado/")
-def obtener_tareas_filtradas(filtros: Filtro_tarea = Body(None)):
-    db = SessionLocal()
-    buscar = db.query(Tarea)
+@app.get("/tareas/por_estado/")
+def buscar_tareas_por_estado(estado: str = Query(None, description="Filtrar tareas por estado")):
+    conexion = SessionLocal()
     
-    if filtros.estado:
-        buscar = buscar.filter(Tarea.estado == filtros.estado)
+    if estado is not None:
+        tareas = conexion.query(Tarea).filter(Tarea.estado == estado).all()
+    else:
+        tareas = conexion.query(Tarea).all()
     
-    tareas = buscar.all()
+    conexion.close()
     
-    db.close()
-    
-    return {"tareas": tareas}
+    return tareas
