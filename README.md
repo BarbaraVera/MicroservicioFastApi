@@ -1,5 +1,5 @@
 # MicroservicioFastApi
-Este es un proyecto de microservicio con FastAPI para gestionar tareas. Puedes crear, leer, actualizar y eliminar tareas a través de una API REST.
+Este es un proyecto de microservicio con FastAPI para gestionar tareas. Puedes crear, leer, actualizar y eliminar tareas a través de una API REST. Los datos se almacenaran en una base de datos sqlite.
 
 ## Requisitos
 
