@@ -17,7 +17,7 @@ def test_crear_tarea():
 
 def test_creacion_tarea_sin_titulo():
     datos_tarea = {
-        "descripcion": "Descripción de prueba",
+        "descripcion": "Descripción tarea de prueba",
         "fecha_vencimiento": "2023-10-12"
     }
     response = client.post("/crear/", json=datos_tarea)
@@ -33,7 +33,7 @@ def test_obtener_tarea():
 
 #Test de eliminar
 def test_eliminar_tarea():
-    tarea_id_existente = 8 
+    tarea_id_existente = 5 
 
     response = client.delete(f"/tarea/{tarea_id_existente}/")
 
@@ -42,7 +42,7 @@ def test_eliminar_tarea():
 
 #Test de actualizar put
 def test_actualizar_tarea():
-    id_existente = 4
+    id_existente = 3
     tarea_actualizada = {
         "titulo": "Tarea actualizada",
         "descripcion": "Descripción actualizada",
@@ -54,7 +54,7 @@ def test_actualizar_tarea():
 
 #Test de actualizar patch
 def test_actualizar_tarea_patch():
-    id_existente = 4
+    id_existente = 2
     tarea_actualizada = {
         "descripcion": "Descripción actualizada patch",
     }
@@ -65,8 +65,8 @@ def test_actualizar_tarea_patch():
 def test_actualizar_tarea_patch_no_encontrada():
     tarea_id_no_existente = 9999  
     tarea_actualizada = {
-        "titulo": "Nuevo Título",
-        "descripcion": "Nueva Descripción",
+        "titulo": "Nuevo Título tarea",
+        "descripcion": "Nueva Descripción tarea",
         "fecha_vencimiento": "2023-12-31"
     }
 
